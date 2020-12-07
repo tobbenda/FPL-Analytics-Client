@@ -12,9 +12,9 @@ const Player = (props) => {
     <div className={`player team-pos-${data.teamPosition}`}>
       <img className="player-img" src={image} alt="shirt"></img>
       <p className="player-name">
-        {data.web_name}:{' '}
-        {playerData ? playerData.find((el) => el.id === data.id).rank : ''}%,
-        Rank: {data.top_ownage}
+        {data.web_name}: Rank:{' '}
+        {playerData ? playerData.find((el) => el.id === data.id).rank : ''},
+        {data.top_own_percent} %
       </p>
     </div>
   );

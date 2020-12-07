@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import './TeamDisplay.css';
 import Player from '../Player/Player';
 import generic_shirt from './images/shirts/generic.webp';
@@ -23,9 +23,17 @@ import West_Ham from './images/shirts/West_Ham.webp';
 import Wolves from './images/shirts/Wolves.webp';
 import { myContext } from '../../App';
 
-const TeamDisplay = props => {
-  const {checkValues, setCheckValues, setPosFilter, setSortBy, submitHandler, setMaxPrice, setMinPrice} = useContext(myContext);
-  const [plainPlayers, setPlainPlayers] = useState([])
+const TeamDisplay = (props) => {
+  const {
+    checkValues,
+    setCheckValues,
+    setPosFilter,
+    setSortBy,
+    submitHandler,
+    setMaxPrice,
+    setMinPrice,
+  } = useContext(myContext);
+  const [plainPlayers, setPlainPlayers] = useState([]);
   const { loginPlayerData } = props;
 
   const getQuery = (elements) => {
@@ -36,52 +44,56 @@ const TeamDisplay = props => {
         team_name,
         team,
         id,
-        top_ownage,
+        top_own_percent,
+        top_cap_percent,
       }
-    }`
-  }
+    }`;
+  };
 
   const getData = async (players) => {
-    await fetch("http://localhost:4001/graphql", {
-      method: "POST",
+    await fetch('http://localhost:4001/graphql', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
       body: JSON.stringify({
         query: getQuery(players),
       }),
     })
       .then((r) => r.json())
-      .then((data) =>  {
+      .then((data) => {
         return data.data.getPlayersByIds;
-      }).then(data => {
-        data.forEach(element => {
-          element.teamPosition = loginPlayerData.find(el => el.element === element.id).position;
+      })
+      .then((data) => {
+        data.forEach((element) => {
+          element.teamPosition = loginPlayerData.find(
+            (el) => el.element === element.id
+          ).position;
         });
         return data;
       })
-      .then(data => setPlainPlayers(data));
+      .then((data) => setPlainPlayers(data));
   };
 
   const getTeamPlayerData = () => {
-    if(loginPlayerData){
-      const playerIDs = loginPlayerData.map(player => {
+    if (loginPlayerData) {
+      const playerIDs = loginPlayerData.map((player) => {
         return player.element;
       });
       getData(playerIDs);
     }
-  }
+  };
 
-  const getImg = (team)  => {
+  const getImg = (team) => {
     switch (team) {
-      case 'Arsenal': 
+      case 'Arsenal':
         return Arsenal;
       case 'Aston Villa':
         return Aston_Villa;
       case 'Brighton':
         return Brighton;
-      case 'Burnley': 
+      case 'Burnley':
         return Burnley;
       case 'Chelsea':
         return Chelsea;
@@ -89,66 +101,115 @@ const TeamDisplay = props => {
         return Crystal_Palace;
       case 'Everton':
         return Everton;
-      case 'Fulham': 
+      case 'Fulham':
         return Fulham;
       case 'Leeds':
         return Leeds;
       case 'Leicester':
         return Leicester;
-      case 'Liverpool': 
+      case 'Liverpool':
         return Liverpool;
       case 'Man Utd':
         return Man_Utd;
       case 'Newcastle':
         return Newcastle;
-      case 'Sheffield Utd': 
+      case 'Sheffield Utd':
         return Sheffield_Utd;
       case 'Southampton':
         return Southampton;
-      case 'Spurs': 
+      case 'Spurs':
         return Spurs;
       case 'West Brom':
         return West_Brom;
       case 'West Ham':
         return West_Ham;
-      case 'Wolves': 
+      case 'Wolves':
         return Wolves;
       default:
         console.log('Error with getImg (TeamDisplay) switch statement');
         return generic_shirt;
     }
-  }
+  };
   useEffect(() => {
     getTeamPlayerData();
-  }, [loginPlayerData])
+  }, [loginPlayerData]);
 
   const isSubstitute = (teamPos) => {
-    return [12,13,14,15].includes(teamPos)
-  }
+    return [12, 13, 14, 15].includes(teamPos);
+  };
 
   return (
-    <div className="team-display"> 
+    <div className="team-display">
       <div className="pitch">
         {/* <button onClick={getTeamPlayerData}>TEST</button> */}
         <div className="playerRow gkp-row">
-          {plainPlayers?plainPlayers.filter((el) => el.position === 'Goalkeeper' && !isSubstitute(el.teamPosition)).map((el) => <Player image={getImg(el.team_name)} data={el} />):''}
+          {plainPlayers
+            ? plainPlayers
+                .filter(
+                  (el) =>
+                    el.position === 'Goalkeeper' &&
+                    !isSubstitute(el.teamPosition)
+                )
+                .map((el) => (
+                  <Player key={el.id} image={getImg(el.team_name)} data={el} />
+                ))
+            : ''}
         </div>
         <div className="playerRow def-row">
-          {plainPlayers?plainPlayers.filter((el) => el.position === 'Defence' && !isSubstitute(el.teamPosition)).map((el) => <Player image={getImg(el.team_name)} data={el} />):''}
+          {plainPlayers
+            ? plainPlayers
+                .filter(
+                  (el) =>
+                    el.position === 'Defence' && !isSubstitute(el.teamPosition)
+                )
+                .map((el) => (
+                  <Player key={el.id} image={getImg(el.team_name)} data={el} />
+                ))
+            : ''}
         </div>
         <div className="playerRow mid-row">
-          {plainPlayers?plainPlayers.filter((el) => el.position === 'Midfielder' && !isSubstitute(el.teamPosition)).map((el) => <Player image={getImg(el.team_name)} data={el} />):''}
+          {plainPlayers
+            ? plainPlayers
+                .filter(
+                  (el) =>
+                    el.position === 'Midfielder' &&
+                    !isSubstitute(el.teamPosition)
+                )
+                .map((el) => (
+                  <Player key={el.id} image={getImg(el.team_name)} data={el} />
+                ))
+            : ''}
         </div>
         <div className="playerRow fwd-row">
-          {plainPlayers?plainPlayers.filter((el) => el.position === 'Attacker' && !isSubstitute(el.teamPosition)).map((el) => <Player image={getImg(el.team_name)} data={el} />):''}
+          {plainPlayers
+            ? plainPlayers
+                .filter(
+                  (el) =>
+                    el.position === 'Attacker' && !isSubstitute(el.teamPosition)
+                )
+                .map((el) => (
+                  <Player key={el.id} image={getImg(el.team_name)} data={el} />
+                ))
+            : ''}
         </div>
         <div className="playerRow sub-row">
-          {plainPlayers?plainPlayers.filter((el) => isSubstitute(el.teamPosition)).map((el) => <Player className="sub" image={getImg(el.team_name)} data={el} />):''}
+          {plainPlayers
+            ? plainPlayers
+                .filter((el) => isSubstitute(el.teamPosition))
+                .map((el) => (
+                  <Player
+                    key={el.id}
+                    className="sub"
+                    image={getImg(el.team_name)}
+                    data={el}
+                  />
+                ))
+            : ''}
         </div>
         {/* <img alt="soccer-pitch" src={pitch}></img> */}
       </div>
     </div>
-  )
-}
+  );
+};
 
 export default TeamDisplay;
