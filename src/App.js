@@ -33,7 +33,7 @@ function App() {
   }
 
   const getData = async () => {
-    await fetch("https://fpl-magic-server.herokuapp.com/graphql", {
+    await fetch("http://localhost:4001/graphql", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
